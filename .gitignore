@@ -1,0 +1,26 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Mac / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Large media files (videos, recordings)
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+
+# Temporary logs & cache
+*.log
+.cache/
