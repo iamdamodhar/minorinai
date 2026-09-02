@@ -27,7 +27,7 @@ flowchart LR
     subgraph TeacherForcing["Parental Guidance / Teacher Forcing Training Loop"]
         direction TB
         EncIn["Source: 'I go <EOS>'"] --> Encoder["Tiny Encoder"]
-        Encoder -->|Context Vector (h)| Decoder["Tiny Decoder"]
+        Encoder -->|Context Vector - h| Decoder["Tiny Decoder"]
         
         DecIn["Ground-Truth Target:<br>'<GO>', 'मैं', 'जाता', 'हूँ'"] --> Decoder
         Decoder --> Preds["Predicted Logits"]

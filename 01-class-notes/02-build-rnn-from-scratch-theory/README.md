@@ -32,7 +32,7 @@ flowchart LR
         E3["'good'"] --> Enc3
     end
     
-    Enc3 -->|Context Vector (c = h_3)| Dec1
+    Enc3 -->|Context Vector - c = h_3| Dec1
     
     subgraph Decoder["DECODER (Speaking Phase)"]
         direction LR
