@@ -145,6 +145,7 @@ Let the concatenated input column vector be $z_t = [h_{t-1}, x_t] = \begin{bmatr
 - **Concatenated Input Dimension**: $h + e = 2 + 2 = 4$
 
 **Vocabulary Mapping ($V = 5$)**:
+
 | Token ID | Word | Semantic Role |
 | :---: | :---: | :--- |
 | `0` | `"I"` | Subject Pronoun |
