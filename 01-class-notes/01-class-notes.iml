@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/01-rnns-and-genai-history" isTestSource="false" packagePrefix="com.vizuara.genai.rnn" />
+      <sourceFolder url="file://$MODULE_DIR$/02-build-rnn-from-scratch-theory" isTestSource="false" packagePrefix="com.vizuara.genai.seq2seq" />
+      <sourceFolder url="file://$MODULE_DIR$/03-lecture-04-code-rnn-from-scratch" isTestSource="false" packagePrefix="com.vizuara.genai.tinyseq2seq" />
+      <sourceFolder url="file://$MODULE_DIR$/04-lecture-05-lstm-networks" isTestSource="false" packagePrefix="com.vizuara.genai.lstm" />
+      <sourceFolder url="file://$MODULE_DIR$/05-lecture-06-code-lstm-translator-and-generator" isTestSource="false" packagePrefix="com.vizuara.genai.lstm" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
