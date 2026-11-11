@@ -14,6 +14,9 @@ Zero-dependency standard-library implementation tracing every mathematical opera
               Final LayerNorm -> Output Linear Layer (Logits) -> Temperature Softmax
 """
 
+from __future__ import annotations
+
+import argparse
 import math
 
 
@@ -308,6 +311,122 @@ def run_three_phase_transformer_trace() -> None:
     print("=" * 92)
 
 
+def run_training(epochs: int = 20, requested_device: str = "auto") -> None:
+    """Train a small causal language model on the trace vocabulary.
+
+    The educational list-based trace above remains dependency-free. This
+    optional path uses PyTorch so the trainable tensors and operations can run
+    on CUDA or Apple Metal (MPS) when available.
+    """
+    try:
+        import torch
+        from torch import nn
+    except ImportError as exc:
+        raise RuntimeError(
+            "Training requires PyTorch. Install a PyTorch build for your platform."
+        ) from exc
+
+    if requested_device == "auto":
+        if torch.cuda.is_available():
+            device = torch.device("cuda")
+        elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+            device = torch.device("mps")
+        else:
+            device = torch.device("cpu")
+    else:
+        device = torch.device(requested_device)
+        if device.type == "cuda" and not torch.cuda.is_available():
+            raise RuntimeError("CUDA was requested, but no CUDA device is available.")
+        if device.type == "mps" and (
+            not hasattr(torch.backends, "mps") or not torch.backends.mps.is_available()
+        ):
+            raise RuntimeError("MPS was requested, but no Apple GPU is available.")
+
+    vocab = ["<pad>", "myntra", "linen", "kurta", "is", "breathable"]
+    token_ids = {token: index for index, token in enumerate(vocab)}
+    sequence = ["myntra", "linen", "kurta", "is", "breathable"]
+    input_ids = torch.tensor(
+        [[token_ids[token] for token in sequence[:-1]]], dtype=torch.long, device=device
+    )
+    target_ids = torch.tensor(
+        [[token_ids[token] for token in sequence[1:]]], dtype=torch.long, device=device
+    )
+
+    class TinyTransformerLM(nn.Module):
+        def __init__(self) -> None:
+            super().__init__()
+            d_model = 32
+            self.token_embedding = nn.Embedding(len(vocab), d_model)
+            self.position_embedding = nn.Parameter(torch.zeros(1, input_ids.size(1), d_model))
+            encoder_layer = nn.TransformerEncoderLayer(
+                d_model=d_model,
+                nhead=4,
+                dim_feedforward=128,
+                dropout=0.1,
+                batch_first=True,
+                activation="gelu",
+            )
+            self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=2)
+            self.output_norm = nn.LayerNorm(d_model)
+            self.output = nn.Linear(d_model, len(vocab), bias=False)
+            self.output.weight = self.token_embedding.weight
+
+        def forward(self, tokens: "torch.Tensor", causal_mask: "torch.Tensor") -> "torch.Tensor":
+            hidden = self.token_embedding(tokens) + self.position_embedding
+            hidden = self.encoder(hidden, mask=causal_mask)
+            return self.output(self.output_norm(hidden))
+
+    model = TinyTransformerLM().to(device)
+    causal_mask = torch.triu(
+        torch.full((input_ids.size(1), input_ids.size(1)), float("-inf"), device=device),
+        diagonal=1,
+    )
+    optimizer = torch.optim.AdamW(model.parameters(), lr=0.01)
+    loss_fn = nn.CrossEntropyLoss()
+
+    print(f"\nTraining device: {device}")
+    if device.type == "cuda":
+        print(f"GPU: {torch.cuda.get_device_name(device)}")
+    model.train()
+    for epoch in range(epochs):
+        optimizer.zero_grad(set_to_none=True)
+        logits = model(input_ids, causal_mask)
+        loss = loss_fn(logits.reshape(-1, len(vocab)), target_ids.reshape(-1))
+        loss.backward()
+        optimizer.step()
+        if epoch == 0 or (epoch + 1) % max(1, epochs // 5) == 0 or epoch + 1 == epochs:
+            print(f"Epoch {epoch + 1:>3}/{epochs} | loss={loss.item():.4f}")
+
+    model.eval()
+    with torch.no_grad():
+        predictions = model(input_ids, causal_mask).argmax(dim=-1)[0].tolist()
+    print(
+        "Predicted next tokens: "
+        + " ".join(vocab[index] for index in predictions)
+    )
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--train",
+        action="store_true",
+        help="Run the optional PyTorch training path instead of only the trace.",
+    )
+    parser.add_argument("--epochs", type=int, default=20)
+    parser.add_argument(
+        "--device",
+        default="auto",
+        choices=("auto", "cpu", "cuda", "mps"),
+        help="Training device. 'auto' prefers CUDA, then Apple MPS, then CPU.",
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    run_part0_word2vec_geometry_demo()
-    run_three_phase_transformer_trace()
+    args = parse_args()
+    if args.train:
+        run_training(epochs=args.epochs, requested_device=args.device)
+    else:
+        run_part0_word2vec_geometry_demo()
+        run_three_phase_transformer_trace()

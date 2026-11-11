@@ -78,3 +78,27 @@ flowchart TD
 python3 "01-class-notes/09-transformers-architecture/transformer_three_phases_from_scratch.py"
 ```
 This zero-dependency script executes **Part 0** (Word2Vec analogy & Cosine/L2 geometry from [`Live_Vector_embedding.ipynb`](file:///Users/damodhar/Documents/Workspace/Learnings/Vizuara%20-%20Minor%20in%20AI/01-class-notes/09-transformers-architecture/Live_Vector_embedding.ipynb)) followed by every matrix operation of **Phase 1**, **Phase 2**, and **Phase 3** on `["myntra", "linen", "kurta"]` $\to$ predicting `"is"` (`56.33%`).
+
+## GPU Training Path
+
+The trace remains the default and uses only the Python standard library. To run
+the optional PyTorch training path, install a PyTorch build for your platform
+and use:
+
+```bash
+python3 "01-class-notes/09-transformers-architecture/transformer_three_phases_from_scratch.py" --train
+```
+
+`--device auto` prefers CUDA, then Apple Metal (`mps`), and falls back to CPU.
+You can select a device explicitly with `--device cuda`, `--device mps`, or
+`--device cpu`; use `--epochs N` to change the training duration. The model,
+inputs, targets, causal mask, and optimizer operations are placed on the
+selected device.
+
+## Notebook Version
+
+The same content is available as a runnable notebook:
+[`transformer_three_phases_from_scratch.ipynb`](./transformer_three_phases_from_scratch.ipynb).
+It splits the script into cells (primitives → Part 0 → Phases 1-3 → GPU
+training). The CLI flags are replaced by the final cell's arguments, e.g.
+`run_training(epochs=20, requested_device="auto")`.
