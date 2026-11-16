@@ -1,0 +1,17 @@
+# Shared runtime dependencies for the Python scripts and notebooks.
+numpy
+matplotlib
+Pillow
+opencv-python
+tqdm
+kagglehub
+truststore
+gensim
+torch
+torchvision
+tensorflow
+diffusers
+datasets
+transformers
+accelerate
+ftfy

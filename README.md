@@ -26,6 +26,31 @@ Welcome to the learning workspace and portfolio for the **Minor in Generative AI
 └── assets/                                                # Diagrams, graphics, and reference datasets
 ```
 
+## 🐍 Python Dependency Management
+
+Python dependencies are maintained at the repository root:
+
+- [`requirements.txt`](./requirements.txt) contains shared dependencies for the Python scripts and notebooks.
+- [`requirements-macos.txt`](./requirements-macos.txt) includes the shared dependencies plus `tensorflow-metal` for Apple GPU support.
+
+On macOS, create or activate the project virtual environment and install with:
+
+```bash
+python -m pip install -r requirements-macos.txt
+```
+
+On other platforms, install the shared set with:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Notebooks should reference these manifests rather than maintaining separate, notebook-specific package lists.
+
+The diffusion-model lesson also has a Kaggle-based variant that trains locally
+without downloading a dataset or pretrained model from Hugging Face:
+[`GenAI_Fundamentals_Introduction_to_diffusers_Kaggle.ipynb`](./01-class-notes/10-introduction-to-diffusion-models/GenAI_Fundamentals_Introduction_to_diffusers_Kaggle.ipynb).
+
 ---
 
 ## 📋 Course Roadmap & Progress Tracker

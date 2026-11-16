@@ -1,0 +1,4 @@
+# macOS-specific additions. Install with:
+# python -m pip install -r requirements-macos.txt
+-r requirements.txt
+tensorflow-metal
