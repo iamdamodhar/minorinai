@@ -7,6 +7,7 @@
 
 - **Original Lecture Notebook (100% Untouched)**: [`GenAI_Fundamentals_Introduction_to_diffusers.ipynb`](file:///Users/damodhar/Documents/Workspace/Learnings/Vizuara%20-%20Minor%20in%20AI/01-class-notes/10-introduction-to-diffusion-models/GenAI_Fundamentals_Introduction_to_diffusers.ipynb)
 - **Dedicated Pixel-Space & Dimensional Projection Deep-Dive**: [`pixel_space_and_dimensional_projection.md`](file:///Users/damodhar/Documents/Workspace/Learnings/Vizuara%20-%20Minor%20in%20AI/01-class-notes/10-introduction-to-diffusion-models/pixel_space_and_dimensional_projection.md)
+- **Dedicated KL-Divergence & Diffusion Loss (`F.mse_loss`) Deep-Dive**: [`kl_divergence_and_diffusion_loss.md`](file:///Users/damodhar/Documents/Workspace/Learnings/Vizuara%20-%20Minor%20in%20AI/01-class-notes/10-introduction-to-diffusion-models/kl_divergence_and_diffusion_loss.md)
 - **Pure Python Diffusion & Cluster-Mixing Verifier**: [`diffusion_cluster_navigation_from_scratch.py`](file:///Users/damodhar/Documents/Workspace/Learnings/Vizuara%20-%20Minor%20in%20AI/01-class-notes/10-introduction-to-diffusion-models/diffusion_cluster_navigation_from_scratch.py)
 - **Enterprise Java 17+ Implementation**: [`DiffusionClusterNavigator.java`](file:///Users/damodhar/Documents/Workspace/Learnings/Vizuara%20-%20Minor%20in%20AI/01-class-notes/10-introduction-to-diffusion-models/DiffusionClusterNavigator.java)
 

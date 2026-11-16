@@ -267,6 +267,44 @@ def run_diffusion_experiments() -> None:
     print(f"  Stage B (Projected RGB Tensor in [-1, +1]^3)   : [R={rgb_float_minus1_to_1[0]:+.3f}, G={rgb_float_minus1_to_1[1]:+.3f}, B={rgb_float_minus1_to_1[2]:+.3f}]")
     print(f"  Stage C (Shifted to [0, 1] via x*0.5 + 0.5)    : [R={rgb_0_to_1[0]:.3f},  G={rgb_0_to_1[1]:.3f},  B={rgb_0_to_1[2]:.3f}]")
     print(f"  Stage D (Screen Pixel uint8 [0..255] Triplet)  : RGB({rgb_uint8[0]}, {rgb_uint8[1]}, {rgb_uint8[2]}) --> Warm Golden-Amber Pixel!")
+
+    print("\n" + "=" * 94)
+    print(" 5. MATHEMATICAL PROOF: GAUSSIAN KL-DIVERGENCE D_KL(q || p_theta) === SCALED F.mse_loss(eps)")
+    print("=" * 94)
+    # Discrete Goa Weather KL-Divergence verification
+    P_goa = [0.90, 0.10]
+    Q_friend = [0.20, 0.80]
+    kl_discrete = sum(p * math.log(p / q) for p, q in zip(P_goa, Q_friend))
+    print(f"  [Discrete KL] P={P_goa} vs Q={Q_friend} --> D_KL(P || Q) = {kl_discrete:.4f} nats (D_KL(P || P) = 0.0000)")
+
+    # DDPM Step-t Gaussian KL-Divergence vs. Noise MSE equivalence at t = 250
+    t_test = 250
+    alpha_t = sched_1000.alphas[t_test]
+    beta_t = sched_1000.betas[t_test]
+    ab_t = sched_1000.alphas_cumprod[t_test]
+    sigma_t_sq = beta_t
+
+    x_0_sample = [-0.80, +0.80]
+    true_eps = [+0.50, -1.20]
+    pred_eps = [+0.35, -0.95]  # UNet's predicted noise eps_theta(x_t, t)
+    x_t_sample = sched_1000.add_noise(x_0_sample, true_eps, t_test)
+
+    # 1. Compute Teacher Mean mu_tilde(x_t, eps) and Student Mean mu_theta(x_t, eps_theta)
+    c_eps = beta_t / math.sqrt(1.0 - ab_t)
+    mu_tilde = [(1.0 / math.sqrt(alpha_t)) * (x_t_sample[d] - c_eps * true_eps[d]) for d in range(2)]
+    mu_theta = [(1.0 / math.sqrt(alpha_t)) * (x_t_sample[d] - c_eps * pred_eps[d]) for d in range(2)]
+
+    # Exact Gaussian KL: D_KL(N(mu_tilde, sigma_t^2 I) || N(mu_theta, sigma_t^2 I))
+    kl_gaussian = sum((mu_tilde[d] - mu_theta[d]) ** 2 for d in range(2)) / (2.0 * sigma_t_sq)
+
+    # 2. Compute Scaled Noise Squared Error: w_t * ||eps - eps_theta||_2^2
+    w_t = (beta_t ** 2) / (2.0 * sigma_t_sq * alpha_t * (1.0 - ab_t))
+    noise_sq_err = sum((true_eps[d] - pred_eps[d]) ** 2 for d in range(2))
+    mse_loss_val = noise_sq_err / 2.0  # PyTorch F.mse_loss averages over D=2 dimensions
+
+    print(f"  [DDPM Step t={t_test}] Exact Gaussian D_KL(q || p_theta) = {kl_gaussian:.10f}")
+    print(f"  [DDPM Step t={t_test}] w_t * ||eps - eps_theta||_2^2     = {w_t * noise_sq_err:.10f}  (Identical to 12 decimals!)")
+    print(f"  [Cell 40 L_simple]   F.mse_loss(noise_pred, noise)     = {mse_loss_val:.6f}      (Unweighted MSE)")
     print("=" * 94)
 
 
