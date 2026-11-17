@@ -7,6 +7,7 @@
 
 - **Original Project Notebook (100% Untouched)**: [`Diffusion_Project_Generate_Chinese_Characters.ipynb`](file:///Users/damodhar/Documents/Workspace/Learnings/Vizuara%20-%20Minor%20in%20AI/01-class-notes/11-diffusion-project-chinese-characters/Diffusion_Project_Generate_Chinese_Characters.ipynb)
 - **Pure Python Radical-Clustering & Denoising Verifier**: [`chinese_character_radical_clusters_from_scratch.py`](file:///Users/damodhar/Documents/Workspace/Learnings/Vizuara%20-%20Minor%20in%20AI/01-class-notes/11-diffusion-project-chinese-characters/chinese_character_radical_clusters_from_scratch.py)
+- **Companion Learning Rate Schedules Guide (`get_cosine_schedule_with_warmup`)**: [`learning_rate_schedules_in_diffusion_and_genai.md`](file:///Users/damodhar/Documents/Workspace/Learnings/Vizuara%20-%20Minor%20in%20AI/01-class-notes/10-introduction-to-diffusion-models/learning_rate_schedules_in_diffusion_and_genai.md)
 
 ---
 

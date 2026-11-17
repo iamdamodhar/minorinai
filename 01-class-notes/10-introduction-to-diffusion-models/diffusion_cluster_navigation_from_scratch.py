@@ -305,6 +305,30 @@ def run_diffusion_experiments() -> None:
     print(f"  [DDPM Step t={t_test}] Exact Gaussian D_KL(q || p_theta) = {kl_gaussian:.10f}")
     print(f"  [DDPM Step t={t_test}] w_t * ||eps - eps_theta||_2^2     = {w_t * noise_sq_err:.10f}  (Identical to 12 decimals!)")
     print(f"  [Cell 40 L_simple]   F.mse_loss(noise_pred, noise)     = {mse_loss_val:.6f}      (Unweighted MSE)")
+
+    print("\n" + "=" * 94)
+    print(" 6. LEARNING RATE SCHEDULES IN DIFFUSION (Peak lr=1e-4, Warmup=200 steps, Total=1000 steps)")
+    print("=" * 94)
+    lr_max = 1e-4
+    t_warm = 200
+    t_tot = 1000
+    print(f"  {'Step':>5s} | {'Constant':>10s} | {'Warm+Const':>10s} | {'Warm+Linear':>11s} | {'Warm+Cosine':>11s} | {'StepLR(0.3x)':>12s}")
+    print("  " + "-" * 74)
+    for step in [0, 50, 100, 200, 400, 500, 600, 800, 950, 1000]:
+        lr_const = lr_max
+        lr_warm_const = lr_max * (step / t_warm) if step < t_warm else lr_max
+        if step < t_warm:
+            lr_linear = lr_max * (step / t_warm)
+            lr_cosine = lr_max * (step / t_warm)
+        else:
+            prog = (step - t_warm) / (t_tot - t_warm)
+            lr_linear = lr_max * (1.0 - prog)
+            lr_cosine = 0.5 * lr_max * (1.0 + math.cos(math.pi * prog))
+        lr_step = lr_max * (0.3 ** (step // 400))
+        print(
+            f"  {step:5d} | {lr_const:10.2e} | {lr_warm_const:10.2e} | "
+            f"{lr_linear:11.2e} | {lr_cosine:11.2e} | {lr_step:12.2e}"
+        )
     print("=" * 94)
 
 
